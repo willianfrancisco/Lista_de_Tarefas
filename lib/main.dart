@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +18,17 @@ final _toDoController = TextEditingController();
 class _HomeState extends State<Home> {
   List _toDoList = [];
 
+  @override
+  Void initState(){
+    super.initState();
+
+    _readData().then((data){
+      setState(() {
+        _toDoList = json.decode(data);
+      });
+    });
+  }
+
   void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = Map();
@@ -24,6 +36,7 @@ class _HomeState extends State<Home> {
       _toDoController.text = "";
       newToDo["Ok"] = false;
       _toDoList.add(newToDo);
+      _saveData();
     });
   }
 
@@ -75,7 +88,7 @@ class _HomeState extends State<Home> {
                       onChanged: (c){
                         setState(() {
                           _toDoList[index]["Ok"] = c;
-                          
+                          _saveData();
                         });
                       },
                     );
